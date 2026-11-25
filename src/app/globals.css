@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Default palette (Lavender / light). ThemeProvider overrides these at runtime
+   from the user's saved settings. */
+:root {
+  --bg: #faf6fb;
+  --surface: #ffffff;
+  --surface2: #f3eef7;
+  --text: #2c2733;
+  --muted: #948da0;
+  --accent: #c79bff;
+  --accent2: #ff9ecf;
+  --accent-soft: rgba(199, 155, 255, 0.16);
+  --on-accent: #ffffff;
+  --border: rgba(40, 30, 55, 0.08);
+  --good: #56c596;
+  --warn: #f3b04b;
+  --bad: #f07a7a;
+  --shadow: 0 6px 22px rgba(80, 60, 110, 0.08);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border p-4;
+    background: var(--surface);
+    border-color: var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 font-bold transition-transform active:scale-95;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: var(--on-accent);
+    box-shadow: 0 6px 16px rgba(180, 120, 220, 0.28);
+  }
+  .btn:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    box-shadow: none;
+  }
+  .btn-danger {
+    background: var(--bad);
+    color: #fff;
+    box-shadow: none;
+  }
+  .btn-sm {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold;
+    background: var(--surface2);
+  }
+  .chip-on {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .input {
+    @apply w-full rounded-sm2 border border-transparent px-3 py-3 text-base outline-none transition-colors;
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .label {
+    @apply mb-1.5 ml-1 block text-xs font-bold;
+    color: var(--muted);
+  }
+
+  .bar {
+    @apply h-2.5 overflow-hidden rounded-full;
+    background: var(--surface2);
+  }
+  .bar > span {
+    @apply block h-full rounded-full;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+/* hide number input spinners for a cleaner look */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,154 @@
+// Bloom — data model
+// Dev uses SQLite (zero-config). For production (e.g. Supabase/Postgres):
+//   1. change provider below to "postgresql"
+//   2. set DATABASE_URL to your Postgres connection string
+// SQLite has no native enums; enum-like fields are validated in the app layer
+// via the zod schemas in src/lib/validation.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("")
+  createdAt    DateTime @default(now())
+
+  settings  Settings?
+  exercises Exercise[]
+  workouts  Workout[]
+  cardio    Cardio[]
+  meals     Meal[]
+  weights   WeightEntry[]
+}
+
+model Settings {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  unit        String @default("kg") // "kg" | "lb"
+  themePreset String @default("lavender")
+  themeMode   String @default("light") // "light" | "dark"
+  accent      String? // custom override hex, null => use preset
+  accent2     String?
+
+  targetKcal    Int @default(2000)
+  targetProtein Int @default(140)
+  targetCarbs   Int @default(200)
+  targetFat     Int @default(60)
+
+  weeklyWorkoutGoal Int @default(4)
+  weeklyCardioGoal  Int @default(90) // minutes
+
+  weightGoalStart  Float?
+  weightGoalTarget Float?
+  weightGoalDate   String? // "YYYY-MM-DD"
+}
+
+/// User-created custom exercises. Built-in exercises are code constants
+/// (src/lib/domain/exercises.ts), not DB rows — so the catalog needs no seeding.
+model Exercise {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  muscleGroup String
+
+  @@index([userId])
+}
+
+model Workout {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String // "YYYY-MM-DD"
+  createdAt DateTime @default(now())
+
+  entries WorkoutEntry[]
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+/// Exercise name + muscle group are snapshotted here (not a foreign key) so
+/// history is preserved even if the source custom exercise is later deleted,
+/// and strength progression groups by exerciseId.
+model WorkoutEntry {
+  id           String  @id @default(cuid())
+  workoutId    String
+  workout      Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId   String
+  exerciseName String
+  muscleGroup  String
+  notes        String?
+  position     Int     @default(0)
+
+  sets WorkoutSet[]
+
+  @@index([workoutId])
+  @@index([exerciseId])
+}
+
+model WorkoutSet {
+  id       String       @id @default(cuid())
+  entryId  String
+  entry    WorkoutEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  position Int          @default(0)
+  reps     Int
+  weight   Float
+
+  @@index([entryId])
+}
+
+model Cardio {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       String
+  type       String
+  minutes    Int
+  distanceKm Float?
+  pace       String?
+  kcal       Int?
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model Meal {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String
+  slot      String // "breakfast" | "lunch" | "dinner" | "snack"
+  name      String
+  kcal      Int      @default(0)
+  protein   Int      @default(0)
+  carbs     Int      @default(0)
+  fat       Int      @default(0)
+  photoUrl  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model WeightEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String
+  kg        Float
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}

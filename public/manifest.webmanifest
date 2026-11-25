@@ -1,0 +1,19 @@
+{
+  "name": "Bloom — Fitness Tracker",
+  "short_name": "Bloom",
+  "description": "A cute, local-first fitness & nutrition tracker.",
+  "start_url": "/today",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6fb",
+  "theme_color": "#c79bff",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# local database (SQLite)
+/prisma/*.db
+/prisma/*.db-journal
+dev.db
+
+# user-uploaded meal photos (runtime data, not source)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# env
+.env
+.env*.local
+
+# misc
+.DS_Store
+*.log
+/coverage
+.vscode/*
+!.vscode/extensions.json
