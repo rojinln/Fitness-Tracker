@@ -48,13 +48,6 @@ npm run setup
 # 4. Run it
 npm run dev
 ```
-
-Open <http://localhost:3000>.
-
-### Install on your iPhone
-Deploy it (see below), open the URL in Safari → **Share** → **Add to Home
-Screen**. It launches full-screen like a native app.
-
 ---
 
 ## Project structure
@@ -85,18 +78,6 @@ src/
 prisma/                        # schema.prisma + seed.ts
 docs/ARCHITECTURE.md           # design, data model, decisions, trade-offs
 ```
-
-### The "no duplicated logic" design
-All calculations (stats, muscle distribution, suggestions, macro/date/goal math)
-live in **`src/lib/domain`** — pure functions with no framework or I/O imports.
-The **server** runs them (in `dashboardService` / `progressService`) and returns
-ready-to-render results; the **client** just displays them. One implementation,
-used by both sides. Zod schemas in `src/lib/validation` are likewise shared by
-the API (request validation) and the client (forms), so the two never drift.
-
-Data flows one way: `app/api/*` (HTTP) → `lib/server/services` (business + DB) →
-`lib/domain` (pure logic). Route handlers never touch Prisma directly; services
-never render.
 
 ---
 
@@ -135,15 +116,3 @@ Deploy to any Node host or Vercel (`vercel`). Set `AUTH_SECRET` and
 > `photoService` at object storage (S3 / Supabase Storage) for production. The
 > upload seam is isolated in `src/lib/server/services/photoService.ts`.
 
----
-
-## Testing & verification
-
-The pure domain layer (the business logic) is unit-tested and type-checked. The
-app's client/server boundary, import graph, and API/UI contracts were verified
-during development. See `docs/ARCHITECTURE.md` for the testing approach and how
-to extend it.
-
-## License
-
-MIT — do what you like.
