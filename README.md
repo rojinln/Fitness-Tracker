@@ -51,8 +51,6 @@ npm run dev
 
 Open <http://localhost:3000>.
 
-**Demo login:** `demo@bloom.app` / `bloom1234` — or register a new account.
-
 ### Install on your iPhone
 Deploy it (see below), open the URL in Safari → **Share** → **Add to Home
 Screen**. It launches full-screen like a native app.
